@@ -240,3 +240,13 @@ and credit usage are normal and widespread at the macro level. I’m not merging
 the customer dataset, but I’m using it as context: individual default risk and credit behavior are
 happening inside a country where credit access and lending are structurally large.
 """)
+
+
+st.subheader("Code Repository")
+
+st.markdown("""
+All data collection, cleaning, and analysis code for this project is available
+on GitHub:
+
+https://github.com/Kay-Abdi/credit-behavior-ml-project
+""")
