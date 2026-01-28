@@ -7,17 +7,25 @@ from src.world_bank_api import df_world_bank
 st.title("Data Prep + EDA")
 
 st.write("""
-My project will use a credit card customer behavior dataset as the primary source of individual-level financial behavior data, 
-and World Bank API data on domestic credit to the private sector as macroeconomic context.
+This project examines patterns in credit card customer behavior using a customer-level financial dataset,
+supplemented with macroeconomic context from the World Bank API. The primary dataset captures individual
+credit usage, payment behavior, and risk-related indicators, enabling direct analysis of financial behavior
+without requiring extensive aggregation. While transaction-level datasets offer fine-grained detail, they
+introduce substantial preprocessing and feature engineering complexity that is unnecessary for the
+behavioral modeling objectives of this study. A customer-level dataset therefore provides an appropriate
+balance between interpretability and analytical depth.
 """)
+
 st.write("""
-During data exploration, I considered both customer-level and transaction-level financial datasets.
-While transaction-level data provides very granular detail, it requires heavy aggregation and feature
-engineering before it can be used for behavioral modeling. Since the goal of this project is to analyze
-credit behavior using clustering, classification, and dimensionality reduction techniques introduced
-in this course, I selected a customer-level dataset as the primary data source. This allows for more
-direct interpretation of behavioral patterns while still capturing meaningful financial risk signals.
+Initial data inspection included evaluation of dataset dimensions, variable types, missing values, and
+duplicate observations. No duplicate records were identified, and missing values were minimal. Summary
+statistics and data type inspection confirmed that the majority of variables are numeric and suitable for
+exploratory and statistical analysis. Non-informative or out-of-scope variables were removed prior to
+analysis. Specifically, unique identifiers were excluded due to the absence of behavioral information,
+and demographic attributes not directly related to credit usage were removed where appropriate. Core
+demographic variables were retained to support later interpretation of behavioral patterns.
 """)
+
 
 
 st.subheader("Raw Data Overview")
@@ -195,14 +203,16 @@ sns.heatmap(
 
 st.pyplot(fig)
 st.write("""
-The correlation heatmap reveals clear groupings among behavioral financial variables. Transaction
-volume, transaction amounts, merchant diversity, and customer lifetime value form a strongly correlated
-cluster, reflecting a shared dimension of customer engagement and spending intensity. In contrast,
-credit score and demographic variables show weak relationships with most behavioral features and with
-default status. Default itself does not strongly correlate with any single variable, suggesting that
-financial risk emerges from combinations of behaviors rather than isolated metrics. These findings
-motivate the use of multivariate and dimensionality reduction techniques in later modeling stages.
+Relationships among financial variables were examined using pairwise correlations. Strong correlations
+emerge among transaction volume, transaction amounts, merchant diversity, and customer lifetime value,
+reflecting a shared dimension of customer engagement and spending intensity. In contrast, demographic
+variables and credit scores display weak correlations with most behavioral measures and with default
+status. Default risk does not strongly associate with any single variable, suggesting that risk arises
+from combinations of behavioral factors rather than isolated metrics. These findings motivate the use of
+multivariate modeling, clustering, and dimensionality reduction techniques in subsequent stages of the
+analysis.
 """)
+
 
 st.markdown("""
 **Data Sources:**
@@ -234,13 +244,14 @@ ax.set_xlabel("Year")
 ax.set_ylabel("Credit to Private Sector (% of GDP)")
 st.pyplot(fig)
 st.write("""
-This World Bank indicator is basically a “how much credit exists in the economy” measure.
-The U.S. values are very high (often near or above 200% of GDP), which reinforces that borrowing
-and credit usage are normal and widespread at the macro level. I’m not merging this directly with
-the customer dataset, but I’m using it as context: individual default risk and credit behavior are
-happening inside a country where credit access and lending are structurally large.
+To provide macroeconomic context, data from the World Bank indicator “Domestic credit to the private
+sector (% of GDP)” were incorporated. This indicator captures the overall scale of credit availability
+within the economy. United States values are consistently high, often approaching or exceeding 200% of
+GDP, reflecting a credit-intensive economic environment. Although this indicator is not directly merged
+with the customer-level dataset, it provides important contextual background. Individual credit behavior
+and default risk are situated within an economy where borrowing and access to credit are structurally
+extensive.
 """)
-
 
 st.subheader("Code Repository")
 
