@@ -6,7 +6,7 @@ st.set_page_config(
 )
 
 pages = [
-    st.Page("home.py", title="Home"),
+    st.Page("Home.py", title="Home"),
     st.Page("pages/Introduction.py", title="Introduction"),
     st.Page("pages/Data_Prep_EDA.py", title="Data Prep EDA"),
     st.Page("pages/ARM.py", title="ARM"),
