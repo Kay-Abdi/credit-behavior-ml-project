@@ -1,17 +1,23 @@
 import streamlit as st
-st.title("Customer Financial Behavior & Credit Risk")
 
-st.write("""
-This interactive website presents an exploratory data science project
-examining patterns in customer-level financial behavior and their
-relationship to financial risk. The project follows the full data
-science lifecycle, including data preparation, exploratory analysis,
-unsupervised learning, and supervised modeling.
-
-Use the navigation menu on the left to explore each section of the project.
-""")
-
-st.info(
-    "Project for CSCI 5612 — Data Science Lifecycle\n"
-    "University of Colorado Boulder"
+st.set_page_config(
+    page_title="Customer Financial Behavior & Credit Risk",
+    layout="wide",
 )
+
+pages = [
+    st.Page("home.py", title="Home"),
+    st.Page("pages/Introduction.py", title="Introduction"),
+    st.Page("pages/Data_Prep_EDA.py", title="Data Prep EDA"),
+    st.Page("pages/ARM.py", title="ARM"),
+    st.Page("pages/Clustering.py", title="Clustering"),
+    st.Page("pages/DT.py", title="DT"),
+    st.Page("pages/NB.py", title="NB"),
+    st.Page("pages/PCA.py", title="PCA"),
+    st.Page("pages/Regression.py", title="Regression"),
+    st.Page("pages/SVM.py", title="SVM"),
+    st.Page("pages/Conclusions.py", title="Conclusions"),
+]
+
+nav = st.navigation(pages, position="sidebar")
+nav.run()
