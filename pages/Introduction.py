@@ -9,6 +9,9 @@ Customer financial behavior plays a central role in shaping financial stability 
 st.write("""
 Financial risk is not evenly distributed, even among individuals with similar economic resources. People with comparable incomes or employment situations often experience very different financial outcomes due to differences in behavior, habits, and decision-making. Prior research in economics and consumer finance has shown that behavioral factors such as payment consistency, spending regularity, and credit usage can be strong indicators of financial stress or stability. Rather than viewing financial risk as a binary outcome, this topic approaches risk as something that emerges from patterns of behavior over time. By examining customer financial behavior at a broader level, this project seeks to identify common behavioral profiles and explore how those profiles relate to differing levels of financial risk.
 """)
+st.write("""
+At the same time, understanding financial behavior is not just about identifying risk, but also about recognizing patterns of stability. Many individuals develop habits that allow them to manage credit effectively, maintain consistent payments, and avoid financial strain even in uncertain situations. By comparing both high-risk and low-risk behavior patterns, this project aims to highlight not only what leads to financial vulnerability, but also what supports long-term financial health. This balanced perspective allows for a more complete understanding of how everyday financial decisions shape outcomes over time.
+""")
 
 st.write("""
 To guide this exploration, the following questions focus on identifying patterns in financial behavior and understanding how those patterns may be associated with financial vulnerability or resilience. These questions are exploratory in nature and are intended to evolve as the project develops, serving as a foundation for investigating how financial behaviors cluster, interact, and signal risk.
