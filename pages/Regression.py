@@ -1,16 +1,13 @@
 import streamlit as st
 import pandas as pd
+import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn.metrics import accuracy_score, confusion_matrix, ConfusionMatrixDisplay
 
-
-# -----------------------------
-# REGRESSION EXPLANATIONS
-# -----------------------------
 
 st.subheader("Linear Regression")
 st.write("""
@@ -33,10 +30,6 @@ st.write("""
 Maximum likelihood is the method used to train logistic regression. Instead of minimizing error, it finds the parameters that maximize the probability of the observed data. This allows the model to better match predictions to actual outcomes.
 """)
 
-# -----------------------------
-# DATA PREP
-# -----------------------------
-
 st.subheader("Data Preparation")
 
 df = pd.read_csv("data/Credit_Card_Dataset.csv")
@@ -57,10 +50,6 @@ X_test_scaled = scaler.transform(X_test)
 st.write("Training set size:", X_train.shape)
 st.write("Testing set size:", X_test.shape)
 
-# -----------------------------
-# MODELS
-# -----------------------------
-
 log_model = LogisticRegression(max_iter=1000)
 log_model.fit(X_train_scaled, y_train)
 log_preds = log_model.predict(X_test_scaled)
@@ -73,36 +62,61 @@ dt_model = DecisionTreeClassifier(random_state=42)
 dt_model.fit(X_train, y_train)
 dt_preds = dt_model.predict(X_test)
 
-# -----------------------------
-# RESULTS
-# -----------------------------
+st.subheader("Code")
+
+st.write("""
+Logistic regression, Naïve Bayes, and Decision Tree models were implemented in Python using scikit-learn. 
+The full code for preprocessing, model training, and evaluation can be found below.
+""")
+
+st.markdown("[View Regression Code on GitHub](https://github.com/Kay-Abdi/credit-behavior-ml-project/blob/main/pages/Regression.py)")
 
 st.subheader("Model Comparison")
 
-# Logistic
 st.write("### Logistic Regression")
 st.write("Accuracy:", accuracy_score(y_test, log_preds))
-st.write(pd.DataFrame(confusion_matrix(y_test, log_preds),
-                     columns=["Pred 0", "Pred 1"],
-                     index=["Actual 0", "Actual 1"]))
+st.write(pd.DataFrame(
+    confusion_matrix(y_test, log_preds),
+    columns=["Pred 0", "Pred 1"],
+    index=["Actual 0", "Actual 1"]
+))
 
-# Naive Bayes
+fig1, ax1 = plt.subplots()
+ConfusionMatrixDisplay.from_predictions(y_test, log_preds, ax=ax1)
+ax1.set_title("Logistic Regression Confusion Matrix")
+st.pyplot(fig1)
+
 st.write("### Naive Bayes")
 st.write("Accuracy:", accuracy_score(y_test, nb_preds))
-st.write(pd.DataFrame(confusion_matrix(y_test, nb_preds),
-                     columns=["Pred 0", "Pred 1"],
-                     index=["Actual 0", "Actual 1"]))
+st.write(pd.DataFrame(
+    confusion_matrix(y_test, nb_preds),
+    columns=["Pred 0", "Pred 1"],
+    index=["Actual 0", "Actual 1"]
+))
 
-# Decision Tree
+fig2, ax2 = plt.subplots()
+ConfusionMatrixDisplay.from_predictions(y_test, nb_preds, ax=ax2)
+ax2.set_title("Naive Bayes Confusion Matrix")
+st.pyplot(fig2)
+
 st.write("### Decision Tree")
 st.write("Accuracy:", accuracy_score(y_test, dt_preds))
-st.write(pd.DataFrame(confusion_matrix(y_test, dt_preds),
-                     columns=["Pred 0", "Pred 1"],
-                     index=["Actual 0", "Actual 1"]))
+st.write(pd.DataFrame(
+    confusion_matrix(y_test, dt_preds),
+    columns=["Pred 0", "Pred 1"],
+    index=["Actual 0", "Actual 1"]
+))
 
-# -----------------------------
-# FEATURE IMPORTANCE
-# -----------------------------
+fig3, ax3 = plt.subplots()
+ConfusionMatrixDisplay.from_predictions(y_test, dt_preds, ax=ax3)
+ax3.set_title("Decision Tree Confusion Matrix")
+st.pyplot(fig3)
+
+st.write("""
+The confusion matrices show how each model performs beyond just accuracy. The diagonal values are correct predictions, while the off-diagonal values show mistakes.
+
+This makes it easier to see how well each model identifies default and non-default customers instead of only looking at one overall score.
+""")
 
 st.subheader("Important Features (Logistic Regression)")
 
@@ -112,10 +126,6 @@ feature_importance = pd.DataFrame({
 }).sort_values(by="Coefficient", key=abs, ascending=False)
 
 st.write(feature_importance.head(10))
-
-# -----------------------------
-# RESULTS INTERPRETATION
-# -----------------------------
 
 st.subheader("Results and Comparison")
 
@@ -128,21 +138,16 @@ The decision tree model was more flexible and identified more default cases than
 
 Overall, logistic regression performed best because it captures how multiple financial behaviors interact rather than treating them as independent.
 """)
-
-# -----------------------------
-# CONCLUSION
-# -----------------------------
-
 st.subheader("Conclusion")
 
 st.write("""
-Comparing all three models shows that financial risk is driven by combinations of behaviors rather than a single factor. Logistic regression performed the best, suggesting that default risk can be effectively modeled as a relationship between multiple financial variables.
+Logistic regression performs the best here because it balances both types of predictions. From the confusion matrix, it correctly identifies a large number of non-default customers while still catching a decent amount of default cases. It is not perfect, but it avoids heavily favoring one class over the other.
 
-These results support the idea that customer behavior forms patterns that distinguish higher-risk and lower-risk groups. Variables such as credit utilization, spending, and payment behavior work together rather than independently.
+Naive Bayes struggles the most. The confusion matrix shows that it predicts most customers as non-default, which leads to a large number of missed default cases. This means it has a high number of false negatives, which is a serious issue in this context. Missing a default is worse than incorrectly flagging someone, so this model would not be reliable for real use.
 
-Overall, this analysis shows that financial behavior data can be used to identify meaningful risk profiles and better understand financial vulnerability and stability.
-""")
+The decision tree does a better job than Naive Bayes at identifying default cases, but it makes more mistakes overall, especially false positives. It is more flexible, but also more sensitive to the data, which makes its predictions less stable.
 
-st.write("""
-In addition, variables such as credit utilization, spending behavior, and payment patterns appear to play a key role in differentiating customer risk. These factors provide more insight when considered together, showing that financial risk comes from interactions between behaviors rather than any single variable alone.
+These results show that default risk comes from a combination of financial behaviors, not just one variable. Models that can capture relationships between variables perform better, which is why logistic regression works best here.
+
+If this were used in a real financial setting, logistic regression would be the best choice. It provides the most balanced predictions and avoids missing too many high-risk customers. In practice, it would be better to slightly over-predict risk than to miss actual defaults, since false negatives carry a higher cost.
 """)

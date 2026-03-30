@@ -16,6 +16,11 @@ At the same time, understanding financial behavior is not just about identifying
 st.write("""
 To guide this exploration, the following questions focus on identifying patterns in financial behavior and understanding how those patterns may be associated with financial vulnerability or resilience. These questions are exploratory in nature and are intended to evolve as the project develops, serving as a foundation for investigating how financial behaviors cluster, interact, and signal risk.
 """)
+st.image(
+    "https://images.unsplash.com/photo-1556740749-887f6717d7e4",
+    caption="Financial decisions, spending habits, and credit usage shape long-term financial outcomes.",
+    width=700
+)
 
 st.subheader("Guiding Questions")
 questions = [

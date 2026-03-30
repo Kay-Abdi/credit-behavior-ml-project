@@ -1,15 +1,12 @@
 import os
 import pandas as pd
 import streamlit as st
+import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+from sklearn.metrics import accuracy_score, ConfusionMatrixDisplay
 
 st.title("Decision Trees")
-
-# -----------------------------
-# Overview
-# -----------------------------
 st.header("Overview")
 
 st.write(
@@ -60,33 +57,24 @@ st.write(
     "there is not just one single possible decision tree."
 )
 
+
 st.image(
     "https://media.geeksforgeeks.org/wp-content/uploads/20250626155813124211/Decision-Tree-2.webp",
-    caption="Example of a decision tree where each node represents a decision and each branch represents an outcome based on a condition (Source: GeeksforGeeks)"
+    caption="Example of a decision tree"
 )
 
 st.image(
     "https://storage.googleapis.com/lds-media/images/gini-impurity-diagram.width-1200.png",
-    caption="Visualization of Gini impurity showing how node purity changes based on class distribution (Source: Google Developers)"
+    caption="Visualization of Gini impurity"
 )
 
-# -----------------------------
-# Data Prep
-# -----------------------------
 st.header("Data Prep")
 
-st.write(
-    "For this section, I used the same credit behavior dataset from earlier in the project. "
-    "The goal is to predict whether a customer will default or not using financial behavior variables. "
-    "The target variable is 'Defaulted', and the features include variables such as credit score, "
-    "annual income, total spending, credit utilization ratio, and debt-to-income ratio."
-)
+st.write("""
+For this section, I used the same credit behavior dataset from earlier in the project. The goal is to predict whether a customer will default or not using financial behavior variables. The target variable is Defaulted, and the features include variables like credit score, annual income, total spending, credit utilization ratio, and debt-to-income ratio.
 
-st.write(
-    "Before training the decision tree, I prepared the data by removing unnecessary columns like IDs, "
-    "and converting any categorical variables into numeric form using one-hot encoding. This is required "
-    "because decision tree models in Python expect numeric input."
-)
+Before training the model, I prepared the data by removing unnecessary columns like IDs and converting categorical variables into numeric form using one-hot encoding. This is needed because decision tree models in Python require numeric input.
+""")
 
 file_path = "data/Credit_Card_Dataset.csv"
 
@@ -116,27 +104,18 @@ if os.path.exists(file_path):
     st.write("Testing sample:")
     st.dataframe(X_test.head())
 
-    st.write(
-        "The training and testing sets must be disjoint, meaning they do not share any of the same observations. "
-        "The training set is used to build the model, while the testing set is used to evaluate how well the model performs "
-        "on unseen data. If the same data appeared in both sets, the model could memorize the answers instead of learning real patterns, "
-        "which would lead to misleading results and overly high accuracy."
-    )
+    st.write("""
+The training set is used to build the model, while the testing set is used to evaluate how well it performs on unseen data. These two sets need to be fully separate. If the same rows showed up in both, the results would look better than they really are.
+""")
 
-    st.write("Sample data is shown below. Full dataset is stored locally in the project files.")
     st.subheader("Sample of Dataset")
     st.dataframe(df.head(10))
 
-    # -----------------------------
-    # Code
-    # -----------------------------
     st.header("Code")
 
-    st.write(
-        "The code below loads the dataset, separates the target variable from the predictors, "
-        "converts categorical variables into numeric form, splits the data into training and testing sets, "
-        "and trains a decision tree classifier using entropy as the split criterion."
-    )
+    st.write("""
+The code below loads the dataset, separates the target variable from the predictors, converts categorical variables into numbers, splits the data into training and testing sets, and trains a decision tree classifier using entropy as the split criterion.
+""")
 
     dt_model = DecisionTreeClassifier(
         criterion="entropy",
@@ -148,55 +127,48 @@ if os.path.exists(file_path):
     y_pred = dt_model.predict(X_test)
 
     acc = accuracy_score(y_test, y_pred)
-    cm = confusion_matrix(y_test, y_pred)
 
     st.write("Decision tree model has been trained successfully.")
     st.write("Accuracy:", round(acc, 4))
-    st.write("Confusion Matrix:")
-    st.write(cm)
 
-    st.markdown(
-        "[Link to DT code](https://github.com/Kay-Abdi/credit-behavior-ml-project/blob/main/pages/DT.py)"
-    )
+    st.subheader("Confusion Matrix")
 
-    # -----------------------------
-    # Results
-    # -----------------------------
+    fig_cm, ax_cm = plt.subplots()
+    ConfusionMatrixDisplay.from_predictions(y_test, y_pred, ax=ax_cm)
+    ax_cm.set_title("Decision Tree Confusion Matrix")
+    st.pyplot(fig_cm)
+
+    st.subheader("Code Snippet")
+
+    st.write("""
+    The decision tree model was implemented in Python using scikit-learn. The full code for data preparation, model training, and visualization can be found below.
+    """)
+
+    st.markdown("[View Decision Tree Code on GitHub](https://github.com/Kay-Abdi/credit-behavior-ml-project/blob/main/pages/DT.py)")
+
     st.header("Results")
-    st.write(
-    "The decision tree model was evaluated using accuracy and a confusion matrix. "
-    "The model achieved an accuracy of approximately 0.6515, meaning it correctly classified about 65% of customers. "
-    "The confusion matrix shows how many customers were correctly and incorrectly classified as default or non-default."
-    )
 
-    st.write(
-    "From the confusion matrix, we can see that the model correctly identified a large number of non-default customers, "
-    "but it also made some errors when predicting default cases. This suggests that while the model captures general patterns, "
-    "there is still some overlap between higher-risk and lower-risk customer behavior."
-    )
-    st.write("Confusion matrix and accuracy are shown above. Tree visualizations will go here next.")
+    st.write("""
+The decision tree model was evaluated using accuracy and a confusion matrix. The model gets around 65% accuracy, which means it is picking up on real patterns in the data, but it is not perfect.
 
-    from sklearn.tree import plot_tree
-    import matplotlib.pyplot as plt
+The confusion matrix gives a better breakdown of what is actually happening. The diagonal values are correct predictions, and the off-diagonal values are errors. From this, you can see that the model does a better job predicting non-default customers than default ones. That means it captures general behavior pretty well, but it struggles more with higher-risk cases.
+
+Overall, there is still overlap between low-risk and high-risk customers, which makes prediction harder.
+""")
 
     st.subheader("Decision Tree Visualization")
 
-    fig, ax = plt.subplots(figsize=(15, 8))
+    fig1, ax1 = plt.subplots(figsize=(15, 8))
     plot_tree(
         dt_model,
         feature_names=X_train.columns,
         class_names=["No Default", "Default"],
         filled=True,
-        ax=ax
+        ax=ax1
     )
-
-    st.pyplot(fig)
-
-    criterion="entropy"
-    max_depth=4
+    st.pyplot(fig1)
 
     st.subheader("Decision Tree (Deeper Tree)")
-
     tree2 = DecisionTreeClassifier(
         criterion="entropy",
         max_depth=6,
@@ -213,14 +185,13 @@ if os.path.exists(file_path):
         filled=True,
         ax=ax2
     )
-
     st.pyplot(fig2)
 
     st.subheader("Decision Tree (Gini Criterion)")
-
     tree3 = DecisionTreeClassifier(
         criterion="gini",
         max_depth=4,
+        max_features=3,
         random_state=42
     )
 
@@ -234,57 +205,25 @@ if os.path.exists(file_path):
         filled=True,
         ax=ax3
     )
-
     st.pyplot(fig3)
-  
-    st.write(
-        "To better understand how decision trees behave, I created multiple trees with different settings. "
-        "The first tree is a moderate-depth tree using entropy, which keeps the model relatively simple and easier to interpret. "
-        "The second tree increases the maximum depth, allowing the model to make more splits and capture more detailed patterns in the data. "
-        "However, this also makes the tree more complex and can lead to overfitting, where the model starts memorizing the training data instead of generalizing well."
-    )
 
-    st.write(
-        "The third tree uses the Gini impurity instead of entropy to decide splits. While both methods aim to create pure nodes, "
-        "they measure impurity slightly differently, which can lead to different split decisions and different root nodes. "
-        "As seen in the visualizations, changing the depth and the splitting criterion results in trees with different structures, "
-        "showing that there is not a single correct way to model the data."
-    )
+    st.write("""
+To better understand how decision trees behave, I made three different versions. The first tree uses entropy with a moderate depth, so it stays simpler and easier to read. The second tree goes deeper, which lets it capture more detailed patterns, but it also makes the model more complex and easier to overfit. The third tree uses Gini instead of entropy, which can lead to different split choices and a different tree structure.
 
-    st.write(
-        "Overall, these differences show that decision trees are flexible, but their performance and structure depend heavily on the chosen parameters. "
-        "Simpler trees are easier to interpret, while deeper trees can capture more complex relationships but may become harder to understand and less generalizable."
-    )
-    st.write("Notice how the deeper tree has many more branches, while the simpler tree focuses on the most important splits near the top.")
-  #----------------------------
-    # Conclusions
-    # -----------------------------
+Looking at all three makes it easier to see that there is not just one single way to build a decision tree on the same dataset. Small changes in settings can lead to different results and different levels of complexity.
+""")
+
     st.header("Conclusions")
-    st.write(
-    "From the decision tree analysis, I learned that default risk is not random and is strongly connected to financial behavior. "
-    "Variables like credit utilization, debt-to-income ratio, spending patterns, and credit score consistently showed up in the tree splits, "
-    "which suggests that these features play a major role in separating higher-risk customers from lower-risk ones."
-)
 
-    st.write(
-        "The model achieved an accuracy of about 65%, which shows that it is able to capture meaningful patterns in the data, "
-        "but it is not perfect. This makes sense because customer behavior can overlap, and not all defaults can be predicted using a simple rule-based model."
-    )
-    st.write(
-    "This analysis helps answer several of the main questions in this project. "
-    "First, it shows that customers can be separated into different risk groups based on their financial behavior. "
-    "Second, it highlights that combinations of variables like high credit utilization and high debt-to-income ratio are associated with higher default risk. "
-    "Third, it confirms that spending and credit usage patterns provide additional insight beyond just income alone."
-)
-    st.write(
-    "One of the biggest advantages of decision trees in this project is interpretability. "
-    "Unlike some other models, the decision tree clearly shows the step-by-step logic used to classify customers. "
-    "This makes it easier to understand which behaviors are driving risk, which is especially important in financial decision-making contexts."
-)
-    st.write(
-    "Overall, the decision tree model provides a useful and interpretable way to understand default risk, "
-    "even though it may not be the most accurate model. It works best as a tool for explaining patterns in the data "
-    "rather than making perfect predictions."
-)
+    st.write("""
+From the decision tree analysis, I learned that default risk is not random and is clearly connected to financial behavior. Variables like credit utilization, debt-to-income ratio, spending, and credit score show up in the splits, which means they play a big role in separating higher-risk customers from lower-risk ones.
+
+The model is not perfect, but it still captures meaningful patterns. It helps answer the main questions in this project by showing that combinations of behaviors matter, not just one variable by itself. It also shows that spending and credit usage patterns give extra insight beyond income alone.
+
+One of the biggest strengths of decision trees in this project is interpretability. The tree shows the step-by-step logic behind the prediction, which makes it easier to understand what is driving customer risk.
+
+Overall, the decision tree model gives a useful and interpretable way to understand default risk, even if it is not the most accurate model.
+""")
+
 else:
     st.error(f"File not found: {file_path}")
