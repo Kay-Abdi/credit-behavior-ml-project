@@ -15,7 +15,9 @@ pages = [
     st.Page("pages/PCA.py", title="PCA"),
     st.Page("pages/Regression.py", title="Regression"),
     st.Page("pages/SVM.py", title="SVM"),
+    st.Page("pages/Ensemble.py", title="Ensemble"),
     st.Page("pages/Conclusions.py", title="Conclusions"),
+
 ]
 
 nav = st.navigation(pages, position="sidebar")
